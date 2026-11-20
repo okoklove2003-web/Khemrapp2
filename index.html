@@ -1,175 +1,80 @@
 <!DOCTYPE html>
 <html lang="km">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0b1120">
-  <title>Angkor Dub Studio — បកប្រែ & បញ្ចូលសំឡេងខ្មែរ</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f172a'/%3E%3Cpath d='M32 10l-4 10h8l-4-10zm-11 8l-3 9h6l-3-9zm22 0l-3 9h6l-3-9zm-19 10h16v6H24v-6zm-10 4l-2 6h4l-2-6zm36 0l-2 6h4l-2-6zM10 38h44v6H10v-6zm-4 8h52v6H6v-6z' fill='%23f59e0b'/%3E%3C/svg%3E">
-  <style>
-    :root {
-      --bg: #0b1120;
-      --card: #111c33;
-      --card2: #182542;
-      --border: #263659;
-      --gold: #f59e0b;
-      --gold-light: #fcd34d;
-      --blue: #38bdf8;
-      --text: #f1f5f9;
-      --muted: #94a3b8;
-    }
-    * { box-sizing: border-box; font-family: system-ui, -apple-system, 'Noto Sans Khmer', sans-serif; }
-    body { margin: 0; padding: 12px; background: radial-gradient(circle at top, #172544 0%, var(--bg) 55%); color: var(--text); min-height: 100vh; }
-    .container { max-width: 920px; margin: 0 auto; }
-
-    /* Header with Angkor Wat Logo */
-    .header {
-      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
-      background: linear-gradient(135deg, #16233e 0%, #1d2c4d 100%);
-      border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 16px; padding: 12px 16px; margin-bottom: 12px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
-    }
-    .brand { display: flex; align-items: center; gap: 12px; }
-    .logo-box {
-      width: 50px; height: 50px; border-radius: 14px;
-      background: linear-gradient(145deg, #1e293b, #0f172a);
-      border: 1.5px solid var(--gold); display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 0 16px rgba(245, 158, 11, 0.25); flex-shrink: 0;
-    }
-    .brand h1 { margin: 0; font-size: 18px; background: linear-gradient(90deg, #fde68a, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .brand small { color: var(--muted); font-size: 12px; display: block; margin-top: 2px; }
-
-    .card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 14px; padding: 14px; margin-bottom: 12px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
-    }
-    .card-title { font-size: 14px; font-weight: 700; color: var(--gold-light); margin: 0 0 10px 0; display: flex; align-items: center; gap: 6px; }
-    .row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; align-items: center; }
-    .row:last-child { margin-bottom: 0; }
-
-    button, select, input[type="text"], input[type="file"] {
-      background: var(--card2); color: #fff; border: 1px solid #334a77;
-      padding: 9px 12px; border-radius: 10px; font-size: 13px; cursor: pointer; transition: 0.15s;
-    }
-    button:active { transform: scale(0.96); }
-    button:disabled { opacity: 0.5; cursor: not-allowed; }
-    .btn-gold { background: linear-gradient(135deg, #d97706, #f59e0b); border-color: #fbbf24; color: #0f172a; font-weight: 700; }
-    .btn-blue { background: #2563eb; border-color: #3b82f6; font-weight: 600; }
-    .btn-cyan { background: #0891b2; border-color: #06b6d4; font-weight: 600; }
-    .btn-purple { background: #7c3aed; border-color: #8b5cf6; font-weight: 600; }
-    .btn-green { background: #16a34a; border-color: #22c55e; font-weight: 600; }
-    .btn-red { background: #dc2626; border-color: #ef4444; font-weight: 600; }
-    .btn-dark { background: #1e293b; border-color: #475569; }
-    .btn-sm { padding: 5px 9px; font-size: 12px; border-radius: 7px; }
-
-    /* Progress Bar 1-100% */
-    .prog-wrap {
-      display: none; background: #0f172a; border: 1px solid rgba(245, 158, 11, 0.45);
-      border-radius: 12px; padding: 10px 12px; margin-top: 8px;
-    }
-    .prog-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 8px; }
-    .prog-text { font-size: 13px; color: #fde68a; word-break: break-word; }
-    .prog-pct { font-size: 18px; font-weight: 800; color: #fbbf24; min-width: 54px; text-align: right; }
-    .prog-track { width: 100%; height: 12px; background: #1e293b; border-radius: 99px; overflow: hidden; }
-    .prog-bar {
-      height: 100%; width: 0%; border-radius: 99px; transition: width 0.25s ease;
-      background: linear-gradient(90deg, #f59e0b, #38bdf8, #22c55e);
-    }
-
-    /* Video + Live Subtitle Overlay */
-    .video-box { position: relative; width: 100%; border-radius: 12px; overflow: hidden; background: #000; display: none; margin-bottom: 10px; border: 1px solid #334155; }
-    video { width: 100%; max-height: 280px; display: block; background: #000; }
-    .sub-overlay {
-      position: absolute; left: 8px; right: 8px; bottom: 44px; text-align: center; pointer-events: none;
-      font-size: 15px; font-weight: 700; color: #fff; text-shadow: 0 2px 6px #000, 0 0 3px #000;
-      background: rgba(0, 0, 0, 0.58); padding: 5px 10px; border-radius: 8px; display: none;
-    }
-
-    /* Audio Mixer Bar */
-    .mixer {
-      background: #0f172a; border: 1px solid #263659; border-radius: 10px; padding: 10px;
-      display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 10px;
-    }
-    .switch-lbl { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer; background: #1e293b; padding: 6px 10px; border-radius: 8px; border: 1px solid #334155; }
-    .switch-lbl input { width: 16px; height: 16px; accent-color: #ef4444; }
-    .slider-lbl { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
-    .slider-lbl input[type="range"] { width: 85px; accent-color: var(--gold); }
-
-    /* Tabs */
-    .tabs { display: flex; gap: 8px; margin-bottom: 10px; }
-    .tab-btn { flex: 1; padding: 9px; border-radius: 10px; background: #0f172a; border: 1px solid var(--border); color: var(--muted); font-weight: 700; }
-    .tab-btn.active { background: linear-gradient(135deg, #1d4ed8, #2563eb); color: #fff; border-color: #60a5fa; }
-
-    /* Dubbing Editor List */
-    .cue-list { max-height: 390px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 2px; }
-    .cue-item {
-      background: #0f172a; border: 1px solid #263659; border-radius: 10px; padding: 10px;
-      display: flex; flex-direction: column; gap: 6px;
-    }
-    .cue-item.active-cue { border-color: var(--gold); box-shadow: 0 0 12px rgba(245, 158, 11, 0.25); }
-    .cue-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; justify-content: space-between; }
-    .cue-times { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
-    .cue-times input { width: 102px; padding: 4px 6px; font-size: 12px; font-family: monospace; background: #182542; }
-    .cue-text { width: 100%; padding: 8px; font-size: 14px; background: #16223a; border: 1px solid #334a77; color: #fff; border-radius: 8px; resize: vertical; min-height: 44px; }
-    .gender-m { background: #1d4ed8; border-color: #60a5fa; }
-    .gender-f { background: #be185d; border-color: #f472b6; }
-
-    textarea#out {
-      width: 100%; height: 320px; background: #0f172a; color: #e2e8f0;
-      border: 1px solid #334a77; border-radius: 10px; padding: 10px; font-size: 13px; line-height: 1.55; font-family: monospace;
-    }
-    #msg { font-size: 13px; color: #38bdf8; margin-top: 6px; word-break: break-word; }
-    .badge { background: rgba(245,158,11,0.18); color: var(--gold-light); padding: 2px 7px; border-radius: 99px; font-size: 11px; font-weight: 700; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1120">
+<title>Angkor Dub Studio</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f172a'/%3E%3Cpath d='M32 8l-4 12h8zm-11 8l-3 10h6zm22 0l-3 10h6zM12 24l-2 8h4zm40 0l-2 8h4zM16 26h32v6H16zm-8 7h48v7H8zm-4 9h56v5H4z' fill='%23f59e0b'/%3E%3C/svg%3E">
+<style>
+*{box-sizing:border-box;font-family:system-ui,-apple-system,sans-serif}
+body{margin:0;padding:12px;background:#0b1120;color:#f1f5f9}
+.wrap{max-width:900px;margin:0 auto}
+.hd{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;background:#16233e;border:1px solid #f59e0b66;border-radius:14px;padding:12px;margin-bottom:12px}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:46px;height:46px;border-radius:12px;background:#0f172a;border:1.5px solid #f59e0b;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand h1{margin:0;font-size:18px;color:#fcd34d}
+.brand small{color:#94a3b8;font-size:12px;display:block}
+.card{background:#111c33;border:1px solid #263659;border-radius:14px;padding:12px;margin-bottom:12px}
+.ttl{font-size:14px;font-weight:700;color:#fcd34d;margin:0 0 10px}
+.row{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:9px;align-items:center}
+.row:last-child{margin-bottom:0}
+button,select,input[type=text],input[type=file]{background:#1e293b;color:#fff;border:1px solid #3b527e;padding:8px 11px;border-radius:9px;font-size:13px;cursor:pointer}
+button:active{transform:scale(.96)}
+button:disabled{opacity:.5}
+.gold{background:#f59e0b;border-color:#fbbf24;color:#0f172a;font-weight:700}
+.blue{background:#2563eb;border-color:#3b82f6;font-weight:600}
+.cyan{background:#0891b2;border-color:#06b6d4;font-weight:600}
+.purp{background:#7c3aed;border-color:#8b5cf6;font-weight:600}
+.grn{background:#16a34a;border-color:#22c55e;font-weight:600}
+.red{background:#dc2626;border-color:#ef4444;font-weight:600}
+.sm{padding:5px 8px;font-size:12px;border-radius:7px}
+.prog{display:none;background:#0f172a;border:1px solid #f59e0b88;border-radius:10px;padding:9px;margin-top:8px}
+.ptop{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
+.ppct{font-size:18px;font-weight:800;color:#fbbf24}
+.ptrk{width:100%;height:11px;background:#1e293b;border-radius:99px;overflow:hidden}
+.pbar{height:100%;width:0%;background:linear-gradient(90deg,#f59e0b,#38bdf8,#22c55e);transition:width .2s}
+.vbox{position:relative;display:none;background:#000;border-radius:10px;overflow:hidden;margin-bottom:10px;border:1px solid #334155}
+video{width:100%;max-height:260px;display:block}
+.sub{position:absolute;left:8px;right:8px;bottom:42px;text-align:center;font-size:15px;font-weight:700;color:#fff;background:#000a;padding:4px 8px;border-radius:7px;display:none;pointer-events:none}
+.mix{background:#0f172a;border:1px solid #263659;border-radius:10px;padding:9px;display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-bottom:10px;font-size:12px}
+.tabs{display:flex;gap:8px;margin-bottom:10px}
+.tbtn{flex:1;padding:8px;background:#0f172a;color:#94a3b8;font-weight:700}
+.tbtn.on{background:#2563eb;color:#fff;border-color:#60a5fa}
+.list{max-height:360px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.cue{background:#0f172a;border:1px solid #263659;border-radius:10px;padding:9px;display:flex;flex-direction:column;gap:6px}
+.cue.act{border-color:#f59e0b}
+.chead{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px;align-items:center}
+.chead input{width:96px;padding:4px 6px;font-size:12px;font-family:monospace}
+.ctext{width:100%;min-height:42px;padding:7px;background:#16223a;color:#fff;border:1px solid #334a77;border-radius:7px;font-size:14px}
+.gm{background:#1d4ed8;border-color:#60a5fa}
+.gf{background:#be185d;border-color:#f472b6}
+textarea#out{width:100%;height:300px;background:#0f172a;color:#e2e8f0;border:1px solid #334a77;border-radius:10px;padding:9px;font-size:13px;font-family:monospace}
+#msg{font-size:13px;color:#4ade80;margin-top:8px;word-break:break-word}
+</style>
 </head>
 <body>
-<div class="container">
-
-  <!-- Header + Angkor Wat Logo -->
-  <div class="header">
+<div class="wrap">
+  <div class="hd">
     <div class="brand">
-      <div class="logo-box" title="ប្រាសាទអង្គរវត្ត">
-        <svg viewBox="0 0 64 64" width="38" height="38" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="ag" x1="0" y1="0" x2="0" y2="64" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#fde68a"/>
-              <stop offset="55%" stop-color="#f59e0b"/>
-              <stop offset="100%" stop-color="#b45309"/>
-            </linearGradient>
-          </defs>
-          <!-- 5 Iconic Angkor Wat Towers -->
-          <path d="M32 6 C30.5 11 28.5 14 28 21 L36 21 C35.5 14 33.5 11 32 6 Z" fill="url(#ag)"/>
-          <path d="M21 14 C19.8 18 18.5 21 18 27 L24 27 C23.5 21 22.2 18 21 14 Z" fill="url(#ag)"/>
-          <path d="M43 14 C41.8 18 40.5 21 40 27 L46 27 C45.5 21 44.2 18 43 14 Z" fill="url(#ag)"/>
-          <path d="M12 22 C11 25 10.2 28 10 33 L14.5 33 C14.3 28 13 25 12 22 Z" fill="url(#ag)"/>
-          <path d="M52 22 C51 25 50.2 28 50 33 L54.5 33 C54.3 28 53 25 52 22 Z" fill="url(#ag)"/>
-          <!-- Temple Gallery & Base -->
-          <rect x="25" y="21" width="14" height="6" rx="1" fill="url(#ag)"/>
-          <rect x="16" y="27" width="32" height="6" rx="1" fill="url(#ag)"/>
-          <rect x="8" y="33" width="48" height="7" rx="1" fill="url(#ag)"/>
-          <!-- Pillars cutouts -->
-          <rect x="14" y="35" width="3" height="5" fill="#0f172a"/>
-          <rect x="21" y="35" width="3" height="5" fill="#0f172a"/>
-          <rect x="30" y="34" width="4" height="6" fill="#0f172a"/>
-          <rect x="40" y="35" width="3" height="5" fill="#0f172a"/>
-          <rect x="47" y="35" width="3" height="5" fill="#0f172a"/>
-          <!-- Lower Terrace & Reflection -->
-          <rect x="5" y="41" width="54" height="4.5" rx="1.5" fill="url(#ag)"/>
-          <rect x="2" y="47" width="60" height="4" rx="1.5" fill="url(#ag)"/>
-          <path d="M12 55 H52 M18 59 H46" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+      <div class="logo">
+        <svg viewBox="0 0 64 64" width="34" height="34" fill="#f59e0b">
+          <path d="M32 6l-4 14h8zm-11 8l-3 12h6zm22 0l-3 12h6zM12 22l-2 10h4zm40 0l-2 10h4z"/>
+          <rect x="25" y="20" width="14" height="6"/><rect x="16" y="26" width="32" height="6"/>
+          <rect x="8" y="32" width="48" height="8"/><rect x="4" y="42" width="56" height="5"/>
+          <rect x="2" y="49" width="60" height="4" opacity=".8"/>
         </svg>
       </div>
       <div>
         <h1>Angkor Dub Studio</h1>
-        <small>ដកស្រង់ចិន • បកប្រែខ្មែរ • បញ្ចូលសំឡេងប្រុស/ស្រីអូតូ</small>
+        <small>ដកស្រង់ចិន • បកប្រែខ្មែរ • សំឡេងប្រុស/ស្រីអូតូ</small>
       </div>
     </div>
-    <div class="row" style="margin:0;">
-      <button class="btn-gold" onclick="setKey()">🔑 API Key</button>
-      <select id="model" onchange="onModelChange()">
-        <option value="auto">🤖 Auto (គ្រប់ជំនាន់អូតូ)</option>
-        <option value="gemini-3.8-flash">Gemini 3.8 Flash (ថ្មី)</option>
+    <div class="row" style="margin:0">
+      <button class="gold" onclick="setKey()">🔑 API Key</button>
+      <select id="model" onchange="document.getElementById('cmodel').style.display=this.value==='custom'?'inline-block':'none'">
+        <option value="auto">🤖 Auto (គ្រប់ជំនាន់)</option>
+        <option value="gemini-3.8-flash">Gemini 3.8 Flash</option>
         <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
         <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
         <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash-Lite</option>
@@ -177,239 +82,249 @@
         <option value="gemini-2.0-flash-lite">Gemini 2.0 Flash-Lite</option>
         <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
         <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
-        <option value="custom">⚙️ វាយឈ្មោះ Model ខ្លួនឯង</option>
+        <option value="custom">⚙️ វាយឈ្មោះខ្លួនឯង</option>
       </select>
-      <input type="text" id="customModel" placeholder="ឧ. gemini-3.8-pro" style="display:none; width:155px;">
+      <input type="text" id="cmodel" placeholder="ឧ. gemini-3.8-pro" style="display:none;width:140px">
     </div>
   </div>
 
-  <!-- Card 1: Video + Extraction + Translation -->
   <div class="card">
-    <div class="card-title">🎬 ១. រើសវីដេអូ ដកស្រង់ភាសាចិន និងបកប្រែខ្មែរ</div>
+    <div class="ttl">🎬 ១. រើសវីដេអូ ដកស្រង់ភាសាចិន & បកប្រែខ្មែរ</div>
     <div class="row">
       <input type="file" id="fileInput" accept="video/*,audio/*">
-      <button class="btn-dark" onclick="document.getElementById('srtInput').click()">📂 បើកឯកសារ .SRT</button>
+      <button onclick="document.getElementById('srtInput').click()">📂 បើក .SRT</button>
       <input type="file" id="srtInput" accept=".srt,.txt" style="display:none">
     </div>
-
     <div class="row">
-      <button class="btn-gold" id="btnLocalZh" onclick="extractChineseLocal()">💻 ដកស្រង់ចិនដោយម៉ាស៊ីន (1–100%)</button>
-      <button class="btn-cyan" onclick="translateSrt()">🔄 បកប្រែ SRT → ខ្មែរ (ប្រុស/ស្រីអូតូ)</button>
-      <button class="btn-purple" onclick="runAI('km')">✨ AI ស្រង់ & បកប្រែផ្ទាល់</button>
-      <button class="btn-dark" onclick="runAI('orig')">📝 AI ស្រង់ចិនដើម</button>
+      <button class="gold" id="btnLocal" onclick="extractLocal()">💻 ដកស្រង់ចិនដោយម៉ាស៊ីន (1–100%)</button>
+      <button class="cyan" onclick="transSrt()">🔄 បកប្រែ SRT → ខ្មែរ (ប្រុស/ស្រី)</button>
+      <button class="purp" onclick="runAI('km')">✨ AI ស្រង់ & បកប្រែផ្ទាល់</button>
+      <button onclick="runAI('orig')">📝 AI ស្រង់ចិនដើម</button>
     </div>
-
-    <!-- Live Progress Bar 1% -> 100% -->
-    <div class="prog-wrap" id="progWrap">
-      <div class="prog-top">
-        <span class="prog-text" id="progText">កំពុងដំណើរការ...</span>
-        <div style="display:flex; align-items:center; gap:6px;">
-          <span class="prog-pct" id="progPct">0%</span>
-          <button class="btn-red btn-sm" id="btnCancel" onclick="cancelTask()" style="display:none;">⏹️ ឈប់</button>
+    <div class="prog" id="prog">
+      <div class="ptop">
+        <span id="ptxt" style="font-size:13px;color:#fde68a">កំពុងដំណើរការ...</span>
+        <div>
+          <span class="ppct" id="ppct">0%</span>
+          <button class="red sm" id="bstop" onclick="stopFlag=true" style="display:none;margin-left:6px">⏹️</button>
         </div>
       </div>
-      <div class="prog-track"><div class="prog-bar" id="progBar"></div></div>
+      <div class="ptrk"><div class="pbar" id="pbar"></div></div>
     </div>
-    <div id="msg">រួចរាល់! រើសវីដេអូ រួចចុច 💻 ដកស្រង់ចិនដោយម៉ាស៊ីន ឬបើកឯកសារ .SRT។</div>
+    <div id="msg">⚠️ បើសារនេះមិនប្តូរទៅពណ៌បៃតងទេ មានន័យថាកូដ Paste មិនទាន់ពេញ!</div>
   </div>
 
-  <!-- Card 2: Video Preview & Dubbing Audio Mixer -->
   <div class="card">
-    <div class="card-title">🎚️ ២. វីដេអូ និងការបញ្ចូលសំឡេង AI (បិទសំឡេងដើម)</div>
-    <div class="video-box" id="videoBox">
+    <div class="ttl">🎚️ ២. វីដេអូ & បញ្ចូលសំឡេង AI (បិទសំឡេងដើម)</div>
+    <div class="vbox" id="vbox">
       <video id="player" controls playsinline></video>
-      <div class="sub-overlay" id="subOverlay"></div>
+      <div class="sub" id="sub"></div>
     </div>
-
-    <div class="mixer">
-      <label class="switch-lbl">
-        <input type="checkbox" id="muteOrig" checked onchange="applyAudioMix()">
-        <span>🔇 បិទសំឡេងដើមចោល (ដាក់តែសំឡេង AI)</span>
-      </label>
-      <label class="slider-lbl">
-        <span>សំឡេងដើម៖ <b id="volTxt">0%</b></span>
-        <input type="range" id="origVol" min="0" max="100" value="0" oninput="onVolSlide()">
-      </label>
-      <label class="slider-lbl">
-        <span>ល្បឿននិយាយ៖</span>
-        <select id="rate" style="padding:5px 8px;">
-          <option value="1.0">1.0x</option>
-          <option value="1.15" selected>1.15x (ណែនាំ)</option>
-          <option value="1.25">1.25x</option>
-          <option value="1.4">1.4x</option>
-        </select>
-      </label>
-      <label class="slider-lbl">
-        <span>👨 ប្រុស៖</span>
-        <input type="range" id="malePitch" min="0.5" max="1.0" step="0.05" value="0.75">
-      </label>
-      <label class="slider-lbl">
-        <span>👩 ស្រី៖</span>
-        <input type="range" id="femalePitch" min="1.05" max="1.6" step="0.05" value="1.25">
-      </label>
+    <div class="mix">
+      <label><input type="checkbox" id="muteOrig" checked onchange="setMix()"> 🔇 បិទសំឡេងដើម (0%)</label>
+      <label>សំឡេងដើម <b id="vtxt">0%</b> <input type="range" id="vol" min="0" max="100" value="0" style="width:75px" oninput="slideVol()"></label>
+      <label>ល្បឿន <select id="rate" style="padding:4px 6px"><option value="1">1.0x</option><option value="1.15" selected>1.15x</option><option value="1.3">1.3x</option></select></label>
+      <label>👨ប្រុស <input type="range" id="mp" min="0.5" max="1" step="0.05" value="0.75" style="width:65px"></label>
+      <label>👩ស្រី <input type="range" id="fp" min="1.05" max="1.6" step="0.05" value="1.25" style="width:65px"></label>
     </div>
-
     <div class="row">
-      <button class="btn-green" onclick="startDubPlay()">▶️ ចាក់វីដេអូ + សំឡេងខ្មែរប្រុស/ស្រីអូតូ</button>
-      <button class="btn-blue" onclick="speakAllSequential()">🔊 អានសំឡេងខ្មែរទាំងអស់</button>
-      <button class="btn-red" onclick="stopDubPlay()">⏹️ ឈប់សំឡេង</button>
+      <button class="grn" onclick="playDub()">▶️ ចាក់វីដេអូ + សំឡេងខ្មែរប្រុស/ស្រីអូតូ</button>
+      <button class="blue" onclick="readAll()">🔊 អានខ្មែរទាំងអស់</button>
+      <button class="red" onclick="stopDub()">⏹️ ឈប់សំឡេង</button>
     </div>
   </div>
 
-  <!-- Card 3: Visual Dubbing Editor & SRT Export -->
   <div class="card">
-    <div class="row" style="justify-content:space-between;">
-      <div class="card-title" style="margin:0;">🎛️ ៣. កាត់តសំឡេងតាមជួរ (ប្រុស/ស្រី) & ទាញយក SRT <span class="badge" id="cueCount">0 ជួរ</span></div>
-      <div class="row" style="margin:0;">
-        <button class="btn-green btn-sm" onclick="saveSrt(true)">💾 Save .SRT (ស្អាត)</button>
-        <button class="btn-dark btn-sm" onclick="saveSrt(false)">💾 Save (មានប្រុស/ស្រី)</button>
-        <button class="btn-dark btn-sm" onclick="copyOut()">📄 Copy</button>
+    <div class="row" style="justify-content:space-between">
+      <div class="ttl" style="margin:0">🎛️ ៣. កាត់តសំឡេង (<span id="cnt">0</span> ជួរ)</div>
+      <div class="row" style="margin:0">
+        <button class="grn sm" onclick="saveSrt(true)">💾 Save .SRT</button>
+        <button class="sm" onclick="saveSrt(false)">💾 Save (ប្រុស/ស្រី)</button>
+        <button class="sm" onclick="copyOut()">📄 Copy</button>
       </div>
     </div>
-
-    <div class="tabs" style="margin-top:10px;">
-      <button class="tab-btn active" id="tabEditor" onclick="switchTab('editor')">🎭 កាត់តសំឡេង (ប្រុស/ស្រី)</button>
-      <button class="tab-btn" id="tabRaw" onclick="switchTab('raw')">📄 អត្ថបទ SRT សរុប</button>
+    <div class="tabs" style="margin-top:9px">
+      <button class="tbtn on" id="t1" onclick="tab(1)">🎭 កាត់តប្រុស/ស្រី</button>
+      <button class="tbtn" id="t2" onclick="tab(2)">📄 អត្ថបទ SRT</button>
     </div>
-
-    <div id="paneEditor">
-      <div class="cue-list" id="cueList">
-        <div style="text-align:center; color:var(--muted); padding:28px 10px; font-size:13px;">
-          មិនទាន់មានអក្សររត់ទេ — រើសវីដេអូ រួចចុចដកស្រង់ ឬបើកឯកសារ .SRT ឬ Paste ក្នុងផ្ទាំង «អត្ថបទ SRT សរុប»។
-        </div>
-      </div>
-      <div class="row" style="margin-top:10px;">
-        <button class="btn-dark btn-sm" onclick="addCue()">➕ បន្ថែមជួរថ្មី</button>
-        <button class="btn-dark btn-sm" onclick="setAllGender('M')">👨 ដាក់ប្រុសទាំងអស់</button>
-        <button class="btn-dark btn-sm" onclick="setAllGender('F')">👩 ដាក់ស្រីទាំងអស់</button>
+    <div id="p1">
+      <div class="list" id="list"></div>
+      <div class="row" style="margin-top:9px">
+        <button class="sm" onclick="addCue()">➕ បន្ថែមជួរ</button>
+        <button class="sm" onclick="allG('M')">👨 ប្រុសទាំងអស់</button>
+        <button class="sm" onclick="allG('F')">👩 ស្រីទាំងអស់</button>
       </div>
     </div>
-
-    <div id="paneRaw" style="display:none;">
-      <textarea id="out" oninput="syncFromRaw()" placeholder="1&#10;00:00:01,000 --> 00:00:04,000&#10;[ប្រុស] សួស្តី! នេះជាអក្សររត់ភាសាខ្មែរ..."></textarea>
+    <div id="p2" style="display:none">
+      <textarea id="out" oninput="fromRaw()" placeholder="1&#10;00:00:01,000 --> 00:00:04,000&#10;Paste អក្សរ SRT នៅទីនេះ..."></textarea>
     </div>
   </div>
-
 </div>
 
 <script>
-  let fileObj = null;
-  let cues = [];
-  let dubMode = false;
-  let lastSpokenIdx = -1;
-  let cancelFlag = false;
-  let localTranscriber = null;
-  let seqSpeaking = false;
+const $=id=>document.getElementById(id);
+const msg=$("msg"),out=$("out"),player=$("player"),vbox=$("vbox"),sub=$("sub"),list=$("list");
+let fileObj=null,cues=[],dubOn=false,lastIdx=-1,stopFlag=false,asr=null,seqOn=false;
+const MODELS=["gemini-3.8-flash","gemini-2.0-flash","gemini-2.0-flash-lite","gemini-2.5-flash","gemini-2.5-flash-lite","gemini-1.5-flash"];
 
-  const msg = document.getElementById("msg");
-  const out = document.getElementById("out");
-  const player = document.getElementById("player");
-  const videoBox = document.getElementById("videoBox");
-  const subOverlay = document.getElementById("subOverlay");
-  const cueList = document.getElementById("cueList");
-  const cueCount = document.getElementById("cueCount");
+window.onerror=(m)=>{msg.style.color="#f87171";msg.innerText="❌ JS Error: "+m};
 
-  const AUTO_MODELS = [
-    "gemini-3.8-flash",
-    "gemini-2.0-flash",
-    "gemini-2.0-flash-lite",
-    "gemini-2.5-flash",
-    "gemini-2.5-flash-lite",
-    "gemini-1.5-flash"
-  ];
+function setMsg(t,err){msg.style.color=err?"#f87171":"#38bdf8";msg.innerText=t}
+function setProg(p,t,c){$("prog").style.display="block";const v=Math.max(0,Math.min(100,Math.round(p)));$("pbar").style.width=v+"%";$("ppct").innerText=v+"%";$("ptxt").innerText=t;$("bstop").style.display=c?"inline-block":"none"}
+function setKey(){const k=prompt("បញ្ចូល Gemini API Key (AIza...):",localStorage.getItem("g_key")||"");if(k!==null){localStorage.setItem("g_key",k.trim());setMsg("✅ រក្សាទុក API Key រួចរាល់!")}}
 
-  // Progress bar controller (1% -> 100%)
-  function setProgress(pct, text, cancellable = false) {
-    const wrap = document.getElementById("progWrap");
-    const clamped = Math.max(0, Math.min(100, Math.round(pct)));
-    wrap.style.display = "block";
-    document.getElementById("progBar").style.width = clamped + "%";
-    document.getElementById("progPct").innerText = clamped + "%";
-    document.getElementById("progText").innerText = text;
-    document.getElementById("btnCancel").style.display = cancellable ? "inline-block" : "none";
+$("fileInput").onchange=e=>{
+  fileObj=e.target.files[0];if(!fileObj)return;
+  player.src=URL.createObjectURL(fileObj);vbox.style.display="block";setMix();
+  setMsg(`📁 បានរើស៖ ${fileObj.name} (${(fileObj.size/1048576).toFixed(2)} MB)`);
+};
+$("srtInput").onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{out.value=r.result;fromRaw();setMsg(`📂 បើក ${f.name} (${cues.length} ជួរ) — ចុច 🔄 បកប្រែបានភ្លាម!`)};
+  r.readAsText(f,"UTF-8");e.target.value="";
+};
+
+function setMix(){
+  const m=$("muteOrig").checked;
+  if(m){player.muted=true;player.volume=0;$("vol").value=0;$("vtxt").innerText="0%"}
+  else{const v=Math.max(15,+$("vol").value||50);$("vol").value=v;player.muted=false;player.volume=v/100;$("vtxt").innerText=v+"%"}
+}
+function slideVol(){const v=+$("vol").value;$("vtxt").innerText=v+"%";$("muteOrig").checked=v===0;player.muted=v===0;player.volume=v/100}
+
+const sec2srt=s=>{s=Math.max(0,+s||0);const h=Math.floor(s/3600),m=Math.floor(s%3600/60),c=Math.floor(s%60),ms=Math.round((s-Math.floor(s))*1000);return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(c).padStart(2,"0")},${String(ms).padStart(3,"0")}`};
+const srt2sec=t=>{const m=String(t||"").match(/(\d+):(\d+):(\d+)[,.](\d+)/);return m?(+m[1])*3600+(+m[2])*60+(+m[3])+(+m[4])/1000:0};
+const fmt=t=>{t=String(t||"00:00:00,000").trim().replace(".",",");const p=t.split(":");return p.length===2?`00:${p[0].padStart(2,"0")}:${p[1].includes(",")?p[1]:p[1]+",000"}`:(p.length===3&&!p[2].includes(",")?t+",000":t)};
+const esc=s=>String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+
+function fromRaw(){
+  cues=[];
+  for(const b of out.value.trim().split(/\r?\n\s*\r?\n/)){
+    const ls=b.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);if(!ls.length)continue;
+    const ti=ls.findIndex(l=>l.includes("-->"));
+    let s="00:00:00,000",e="00:00:03,000",tx=ls;
+    if(ti!==-1){const p=ls[ti].split("-->");s=fmt(p[0]);e=fmt(p[1]);tx=ls.slice(ti+1)}
+    let t=tx.join(" ").trim();if(!t)continue;
+    let g="M";
+    if(/^\[(?:ស្រី|F|Female)\]\s*/i.test(t)){g="F";t=t.replace(/^\[(?:ស្រី|F|Female)\]\s*/i,"")}
+    else t=t.replace(/^\[(?:ប្រុស|M|Male)\]\s*/i,"");
+    cues.push({s,e,ss:srt2sec(s),es:srt2sec(e),g,t});
   }
+  render();
+}
+const toSrt=clean=>cues.map((c,i)=>`${i+1}\n${c.s} --> ${c.e}\n${clean?"":(c.g==="F"?"[ស្រី] ":"[ប្រុស] ")}${c.t.trim()}`).join("\n\n");
+function toRaw(){out.value=toSrt(false);$("cnt").innerText=cues.length}
 
-  function hideProgress() {
-    document.getElementById("progWrap").style.display = "none";
-  }
+function render(){
+  $("cnt").innerText=cues.length;
+  if(!cues.length){list.innerHTML='<div style="text-align:center;color:#94a3b8;padding:20px;font-size:13px">មិនទាន់មានអក្សររត់ទេ — រើសវីដេអូ ឬបើក .SRT</div>';return}
+  list.innerHTML=cues.map((c,i)=>`<div class="cue" id="c${i}"><div class="chead">
+    <div><input value="${esc(c.s)}" onchange="uTime(${i},'s',this.value)"> → <input value="${esc(c.e)}" onchange="uTime(${i},'e',this.value)"></div>
+    <div>
+      <button class="sm ${c.g==='F'?'gf':'gm'}" onclick="togG(${i})">${c.g==='F'?'👩 ស្រី':'👨 ប្រុស'}</button>
+      <button class="sm" onclick="sayOne(${i})">🔊</button>
+      <button class="sm" onclick="seek(${i})">⏱️</button>
+      <button class="red sm" onclick="delC(${i})">🗑️</button>
+    </div></div>
+    <textarea class="ctext" oninput="cues[${i}].t=this.value;toRaw()">${esc(c.t)}</textarea></div>`).join("");
+}
+function togG(i){cues[i].g=cues[i].g==="F"?"M":"F";toRaw();render()}
+function allG(g){cues.forEach(c=>c.g=g);toRaw();render()}
+function uTime(i,k,v){cues[i][k]=fmt(v);cues[i].ss=srt2sec(cues[i].s);cues[i].es=srt2sec(cues[i].e);toRaw()}
+function delC(i){cues.splice(i,1);toRaw();render()}
+function addCue(){const le=cues.length?cues[cues.length-1].es:0;cues.push({s:sec2srt(le),e:sec2srt(le+3),ss:le,es:le+3,g:"M",t:""});toRaw();render()}
+function seek(i){if(player.src){player.currentTime=cues[i].ss;sub.style.display="block";sub.innerText=cues[i].t}}
+function tab(n){$("t1").classList.toggle("on",n===1);$("t2").classList.toggle("on",n===2);$("p1").style.display=n===1?"block":"none";$("p2").style.display=n===2?"block":"none"}
 
-  function cancelTask() {
-    cancelFlag = true;
-    msg.innerText = "⏹️ កំពុងបញ្ឈប់ការដំណើរការ...";
-  }
+async function extractLocal(){
+  if(!fileObj)return alert("សូមរើសវីដេអូ ឬសំឡេងជាមុនសិន!");
+  stopFlag=false;$("btnLocal").disabled=true;
+  try{
+    setProg(1,"កំពុងរៀបចំម៉ាស៊ីនដកស្រង់ចិន (Whisper)...",true);
+    if(!asr){
+      const {pipeline,env}=await import("https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2");
+      env.allowLocalModels=false;env.useBrowserCache=true;
+      if(env.backends?.onnx?.wasm){env.backends.onnx.wasm.numThreads=1;env.backends.onnx.wasm.proxy=false}
+      asr=await pipeline("automatic-speech-recognition","Xenova/whisper-tiny",{
+        progress_callback:p=>{if(p.status==="progress"&&typeof p.progress==="number")setProg(2+p.progress*0.25,"កំពុងទាញយកម៉ាស៊ីនចូល Chrome (តែលើកទី១)...",true)}
+      });
+    }
+    if(stopFlag)throw new Error("បានឈប់");
+    setProg(28,"កំពុងបំបែកសំឡេងពីវីដេអូ...",true);
+    const ab=await fileObj.arrayBuffer();
+    const ac=new (window.AudioContext||window.webkitAudioContext)();
+    const dec=await ac.decodeAudioData(ab);
+    const oc=new OfflineAudioContext(1,Math.ceil(dec.duration*16000),16000);
+    const src=oc.createBufferSource();src.buffer=dec;src.connect(oc.destination);src.start(0);
+    const pcm=(await oc.startRendering()).getChannelData(0);ac.close();
 
-  function onModelChange() {
-    const m = document.getElementById("model").value;
-    document.getElementById("customModel").style.display = m === "custom" ? "inline-block" : "none";
-  }
+    const step=20*16000,tot=Math.ceil(pcm.length/step);
+    cues=[];render();
+    for(let i=0;i<tot;i++){
+      if(stopFlag)break;
+      const a=i*step,b=Math.min(pcm.length,a+step),sl=pcm.subarray(a,b),s0=a/16000,e0=b/16000;
+      setProg(30+(i/tot)*69,`កំពុងដកស្រង់ចិនដោយម៉ាស៊ីន (${i+1}/${tot})...`,true);
+      let sq=0;for(let k=0;k<sl.length;k+=8)sq+=sl[k]*sl[k];
+      if(Math.sqrt(sq/(sl.length/8))<0.004)continue;
+      const res=await asr(sl,{language:"chinese",task:"transcribe",return_timestamps:true});
+      if(res.chunks?.length){
+        for(const ch of res.chunks){
+          const t=(ch.text||"").trim();if(!t)continue;
+          const ss=s0+(ch.timestamp?.[0]??0),es=Math.max(ss+0.5,s0+(ch.timestamp?.[1]??(e0-s0)));
+          cues.push({s:sec2srt(ss),e:sec2srt(es),ss,es,g:"M",t});
+        }
+      }else if(res.text?.trim()){
+        cues.push({s:sec2srt(s0),e:sec2srt(e0),ss:s0,es:e0,g:"M",t:res.text.trim()});
+      }
+      toRaw();render();
+    }
+    setProg(100,`✅ ដកស្រង់ចិនរួចរាល់ ១០០% (${cues.length} ជួរ)!`,false);
+    setMsg(`✅ រួចរាល់ (${cues.length} ជួរ) — ចុច 🔄 បកប្រែ SRT → ខ្មែរ បានភ្លាម!`);
+  }catch(e){setProg(0,"❌ "+e.message,false);setMsg("❌ "+e.message,true)}
+  finally{$("btnLocal").disabled=false}
+}
 
-  function setKey() {
-    const k = prompt("បញ្ចូល Gemini API Key របស់អ្នក (AIza...):", localStorage.getItem("g_key") || "");
-    if (k !== null) {
-      localStorage.setItem("g_key", k.trim());
-      msg.innerText = "✅ បានរក្សាទុក API Key រួចរាល់!";
+async function callAI(parts){
+  const key=localStorage.getItem("g_key");
+  const mSel=$("model").value;
+  const ms=mSel==="auto"?MODELS:[mSel==="custom"?($("cmodel").value.trim()||"gemini-3.8-flash"):mSel];
+  let err="API Error";
+  for(const m of ms){
+    for(let a=1;a<=2;a++){
+      const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(m)}:generateContent?key=${encodeURIComponent(key)}`,{
+        method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{parts}]})
+      });
+      const j=await r.json();
+      if(!j.error){setMsg("⚡ កំពុងប្រើ "+m);return j.candidates?.[0]?.content?.parts?.[0]?.text||""}
+      err=`[${m}] ${j.error.message}`;
+      if(/high demand|overloaded|503|unavailable/i.test(err)&&a<2){await new Promise(z=>setTimeout(z,2000));continue}
+      break;
     }
   }
+  throw new Error(err);
+}
 
-  // Video / Audio upload
-  document.getElementById("fileInput").onchange = (e) => {
-    fileObj = e.target.files[0];
-    if (!fileObj) return;
-    player.src = URL.createObjectURL(fileObj);
-    videoBox.style.display = "block";
-    applyAudioMix();
-    msg.innerText = `📁 បានរើស៖ ${fileObj.name} (${(fileObj.size / 1024 / 1024).toFixed(2)} MB)`;
-  };
+const b64=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(",")[1]);r.onerror=rej;r.readAsDataURL(f)});
 
-  // Load .SRT file
-  document.getElementById("srtInput").onchange = (e) => {
-    const f = e.target.files[0];
-    if (!f) return;
-    const r = new FileReader();
-    r.onload = () => {
-      out.value = r.result;
-      syncFromRaw();
-      msg.innerText = `📂 បានបើក៖ ${f.name} (${cues.length} ជួរ) — ចុច 🔄 បកប្រែ SRT → ខ្មែរ បានភ្លាម!`;
-    };
-    r.readAsText(f, "UTF-8");
-    e.target.value = "";
-  };
+async function runAI(mode){
+  if(!localStorage.getItem("g_key"))return alert("សូមចុច 🔑 API Key ជាមុនសិន!");
+  if(!fileObj)return alert("សូមរើសវីដេអូ ឬសំឡេងជាមុនសិន!");
+  if(fileObj.size>18*1048576)return alert("File ធំជាង 18MB! សូមប្រើ 💻 ដកស្រង់ចិនដោយម៉ាស៊ីន ឬប្រើសំឡេង MP3។");
+  let p=5;setProg(5,"កំពុងផ្ញើទៅ Gemini AI...",false);
+  const tm=setInterval(()=>{if(p<90){p+=5;setProg(p,"AI កំពុងដំណើរការ...",false)}},900);
+  try{
+    const pr=mode==="orig"
+      ?`ស្រង់សំឡេងភាសាដើមពីវីដេអូនេះ (កុំបកប្រែ) ជា JSON Array តែប៉ុណ្ណោះ: [{"in":"00:00:01,000","out":"00:00:04,000","gender":"M","text":"..."}]`
+      :`ស្រង់សំឡេងពីវីដេអូនេះ បកប្រែជាខ្មែរនិយាយធម្មជាតិ ខ្លីៗ សម្រាប់បញ្ចូលសំឡេង ដោយដាក់ gender ជា "M"(ប្រុស) ឬ "F"(ស្រី) អូតូ។ ផ្ញើតែ JSON Array: [{"in":"00:00:01,000","out":"00:00:04,000","gender":"M","text":"..."}]`;
+    const txt=await callAI([{text:pr},{inline_data:{mime_type:fileObj.type||"audio/mp3",data:await b64(fileObj)}}]);
+    clearInterval(tm);
+    const m=txt.match(/\[[\s\S]*\]/);if(!m)throw new Error("AI មិនបានផ្ញើ JSON ត្រឹមត្រូវទេ");
+    cues=JSON.parse(m[0]).map(x=>{const s=fmt(x.in),e=fmt(x.out);return{s,e,ss:srt2sec(s),es:srt2sec(e),g:String(x.gender).toUpperCase()==="F"?"F":"M",t:String(x.text||"").trim()}});
+    toRaw();render();setProg(100,`✅ រួចរាល់ (${cues.length} ជួរ)!`,false);setMsg(`✅ AI រួចរាល់ (${cues.length} ជួរ)!`);
+  }catch(e){clearInterval(tm);setProg(0,"❌ "+e.message,false);setMsg("❌ "+e.message,true)}
+}
 
-  // Audio Mute / Mix controls
-  function applyAudioMix() {
-    const mute = document.getElementById("muteOrig").checked;
-    const slider = document.getElementById("origVol");
-    if (mute) {
-      player.muted = true;
-      player.volume = 0;
-      slider.value = 0;
-      document.getElementById("volTxt").innerText = "0%";
-    } else {
-      const v = Math.max(10, parseInt(slider.value || "50", 10));
-      slider.value = v;
-      player.muted = false;
-      player.volume = v / 100;
-      document.getElementById("volTxt").innerText = v + "%";
-    }
-  }
-
-  function onVolSlide() {
-    const v = parseInt(document.getElementById("origVol").value, 10);
-    document.getElementById("volTxt").innerText = v + "%";
-    document.getElementById("muteOrig").checked = (v === 0);
-    player.muted = (v === 0);
-    player.volume = v / 100;
-  }
-
-  // Time formatting helpers
-  function secToSrt(sec) {
-    sec = Math.max(0, Number(sec) || 0);
-    const h = Math.floor(sec / 3600);
-    const m = Math.floor((sec % 3600) / 60);
-    const s = Math.floor(sec % 60);
-    const ms = Math.round((sec - Math.floor(sec)) * 1000);
-    return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")},${String(ms).padStart(3,"0")}`;
-  }
-
-  function srtToSec(str) {
-    const m = String(str || "").trim().match(/(\d+):(\d+):(\d+)[,\.](\d+
+async function transSrt(){
+  if(!localStorage.getItem("g_key"))return alert("សូមចុច 🔑 API Key ជាមុនសិន!");
+  if(!cues.length&&out.value.trim())fromRaw();
+  if(!cues.length)return alert("មិនទាន់មានអក្សរចិនទេ! សូមដកស្រង់ ឬបើ
