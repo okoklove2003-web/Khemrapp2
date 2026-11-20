@@ -6,431 +6,138 @@
 <meta name="theme-color" content="#0b1120">
 <title>Angkor Dub Studio</title>
 <style>
-*{box-sizing:border-box;font-family:system-ui,sans-serif}
+*{box-sizing:border-box;font-family:system-ui,-apple-system,"Noto Sans Khmer",sans-serif}
 body{margin:0;padding:12px;background:#0b1120;color:#f1f5f9}
-.wrap{max-width:900px;margin:auto}
-.card{background:#111c33;border:1px solid #263659;border-radius:14px;padding:12px;margin-bottom:12px}
-h1{font-size:20px;color:#fcd34d}
-h3{font-size:14px;color:#fcd34d}
-button,input,select{background:#1e293b;color:white;border:1px solid #3b527e;padding:9px;border-radius:8px;margin:3px}
-button{cursor:pointer}
-.gold{background:#f59e0b;color:#111827;font-weight:bold}
-.green{background:#16a34a}
-.blue{background:#2563eb}
-.red{background:#dc2626}
-.row{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
-video{width:100%;max-height:300px;background:black}
-textarea{width:100%;min-height:75px;background:#0f172a;color:white;border:1px solid #334a77;border-radius:8px;padding:8px}
-.cue{background:#0f172a;border:1px solid #334155;border-radius:10px;padding:9px;margin:8px 0}
-.time{width:145px;font-size:12px}
-#status{color:#4ade80;word-break:break-word}
-#list{max-height:450px;overflow:auto}
+.wrap{max-width:960px;margin:auto}
+header,.card{background:#111c33;border:1px solid #263659;border-radius:14px;padding:13px;margin-bottom:12px}
+header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;background:#16233e;border-color:#f59e0b66}
+.brand{display:flex;gap:10px;align-items:center}.logo{width:46px;height:46px;border-radius:12px;border:1px solid #f59e0b;display:grid;place-items:center;background:#0f172a;color:#f59e0b;font-size:26px}
+h1{font-size:18px;margin:0;color:#fcd34d}small{color:#94a3b8}
+h2{font-size:14px;color:#fcd34d;margin:0 0 10px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+button,input,select{background:#1e293b;color:#fff;border:1px solid #3b527e;border-radius:9px;padding:8px 10px;font-size:13px}
+button{cursor:pointer}button:active{transform:scale(.97)}button:disabled{opacity:.55}
+.gold{background:#f59e0b;color:#111827;font-weight:700}.blue{background:#2563eb}.cyan{background:#0891b2}.purple{background:#7c3aed}.green{background:#16a34a}.red{background:#dc2626}
+video{width:100%;max-height:340px;background:#000;border-radius:10px}
+#videoBox{display:none;margin:10px 0}
+textarea{width:100%;min-height:140px;background:#0f172a;color:#e2e8f0;border:1px solid #334a77;border-radius:10px;padding:10px;font-size:14px}
+#cueList{display:flex;flex-direction:column;gap:8px;max-height:420px;overflow:auto}
+.cue{background:#0f172a;border:1px solid #263659;border-radius:10px;padding:10px}
+.cuehead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:7px}
+.cue input.time{width:130px;font-family:monospace;padding:5px}
+.cue textarea{min-height:60px;margin-top:7px}
+.badge{color:#fcd34d;font-size:12px}
+#status{padding:8px;color:#7dd3fc;overflow-wrap:anywhere}
+progress{width:100%;height:14px}
+.tabs{display:flex;gap:8px}.tabs button{flex:1}
+#raw{display:none}
+footer{font-size:12px;color:#94a3b8;padding:8px}
 </style>
 </head>
 <body>
 <div class="wrap">
+<header>
+  <div class="brand"><div class="logo">🏯</div><div><h1>Angkor Dub Studio</h1><small>ដកស្រង់ • បកប្រែខ្មែរ • អានសំឡេង</small></div></div>
+  <div class="row" style="margin:0">
+    <button class="gold" onclick="setAPI()">🔑 Gemini API Key</button>
+    <select id="model"><option value="gemini-2.5-flash">Gemini 2.5 Flash</option><option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite</option></select>
+  </div>
+</header>
 
-<div class="card">
-<h1>🏯 Angkor Dub Studio</h1>
-<p>ដកស្រង់ចិន • បកប្រែខ្មែរ • សំឡេងប្រុស/ស្រី</p>
-<button class="gold" onclick="setKey()">🔑 API Key</button>
-<select id="model">
-<option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
-<option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
-</select>
+<section class="card">
+<h2>១. ជ្រើសវីដេអូ / សំឡេង / SRT</h2>
+<div class="row"><input id="media" type="file" accept="video/*,audio/*"><input id="srtfile" type="file" accept=".srt,.txt"></div>
+<div id="videoBox"><video id="player" controls playsinline></video></div>
+<div class="row">
+<button class="gold" onclick="aiExtract('translate')">✨ AI ស្រង់ + បកប្រែខ្មែរ</button>
+<button class="blue" onclick="aiExtract('original')">📝 AI ស្រង់អត្ថបទដើម</button>
+<button class="cyan" onclick="translateCues()">🔄 បកប្រែ SRT ទៅខ្មែរ</button>
+<button onclick="localWhisper()">💻 Whisper ក្នុង Browser (សំឡេង)</button>
 </div>
+<div id="status">សូមបញ្ចូលវីដេអូ ឬ SRT ជាមុន។</div><progress id="prog" value="0" max="100" style="display:none"></progress>
+</section>
 
-<div class="card">
-<h3>🎬 ១. វីដេអូ / SRT</h3>
-<input type="file" id="file" accept="video/*,audio/*">
-<input type="file" id="srtfile" accept=".srt,.txt">
-<div id="videoBox" style="display:none">
-<video id="video" controls playsinline></video>
+<section class="card">
+<h2>២. ចាក់វីដេអូ និងសំឡេងខ្មែរ</h2>
+<div class="row">
+<label><input type="checkbox" id="mute" checked> បិទសំឡេងដើម</label>
+<label>សំឡេងដើម <input type="range" id="volume" min="0" max="100" value="0"></label>
+<label>ល្បឿន <select id="rate"><option>1</option><option selected>1.15</option><option>1.3</option></select></label>
 </div>
 <div class="row">
-<button class="gold" onclick="extract()">💻 ស្រង់ចិន</button>
-<button class="blue" onclick="aiExtract(true)">✨ AI ស្រង់ + បកប្រែ</button>
-<button onclick="aiExtract(false)">📝 ស្រង់ចិនដើម</button>
-<button class="green" onclick="translateSRT()">🔄 បកប្រែ SRT</button>
-</div>
-<p id="status">សូមជ្រើសវីដេអូ ឬ SRT</p>
-</div>
-
-<div class="card">
-<h3>🎚️ ២. សំឡេង</h3>
-<label>🔇 បិទសំឡេងដើម
-<input type="checkbox" id="mute" checked>
-</label>
-<label>ល្បឿន
-<select id="speed">
-<option value="1">1.0x</option>
-<option value="1.15" selected>1.15x</option>
-<option value="1.3">1.3x</option>
-</select>
-</label>
-<label>ប្រុស
-<select id="male">
-<option value="0.8">ទាប</option>
-<option value="1">ធម្មតា</option>
-</select>
-</label>
-<label>ស្រី
-<select id="female">
-<option value="1.2">ធម្មតា</option>
-<option value="1.4">ខ្ពស់</option>
-</select>
-</label>
-<div class="row">
-<button class="green" onclick="playDub()">▶️ ចាក់វីដេអូ + Dub</button>
+<button class="green" onclick="playDub()">▶️ ចាក់វីដេអូ + អានអក្សរ</button>
 <button class="blue" onclick="readAll()">🔊 អានទាំងអស់</button>
-<button class="red" onclick="stop()">⏹️ ឈប់</button>
+<button class="red" onclick="stopSpeech()">⏹️ ឈប់</button>
 </div>
-</div>
+<div class="row"><label>សំឡេងប្រុស <select id="maleVoice"></select></label><label>សំឡេងស្រី <select id="femaleVoice"></select></label></div>
+<div class="row"><label>Pitch ប្រុស <input id="mpitch" type="range" min="0.5" max="1.2" step="0.05" value="0.8"></label><label>Pitch ស្រី <input id="fpitch" type="range" min="1" max="1.7" step="0.05" value="1.2"></label></div>
+</section>
 
-<div class="card">
-<h3>📝 ៣. កាត់ត Subtitle</h3>
+<section class="card">
+<h2>៣. កែតម្រូវអត្ថបទ និងពេលវេលា <span id="count">0</span> ជួរ</h2>
 <div class="row">
-<button onclick="add()">➕ បន្ថែម</button>
-<button onclick="allGender('M')">👨 ប្រុសទាំងអស់</button>
-<button onclick="allGender('F')">👩 ស្រីទាំងអស់</button>
-<button class="green" onclick="saveSrt(false)">💾 Save SRT</button>
-<button class="gold" onclick="saveSrt(true)">💾 Save ស្អាត</button>
+<button class="green" onclick="downloadSRT(false)">💾 Save SRT (ប្រុស/ស្រី)</button>
+<button class="gold" onclick="downloadSRT(true)">💾 Save SRT ស្អាត</button>
+<button onclick="copySRT()">📋 Copy SRT</button>
+<button onclick="addCue()">➕ បន្ថែមជួរ</button>
+<button onclick="setAll('M')">👨 ប្រុសទាំងអស់</button>
+<button onclick="setAll('F')">👩 ស្រីទាំងអស់</button>
 </div>
-<div id="list"></div>
-<hr>
-<h3>📄 SRT</h3>
-<textarea id="raw" rows="12" placeholder="Paste SRT នៅទីនេះ..." oninput="parseRaw()"></textarea>
-</div>
-
+<div id="cueList"></div>
+<h2 style="margin-top:12px">SRT Text</h2><textarea id="raw" placeholder="SRT text..." oninput="parseSRT()"></textarea>
+</section>
+<footer>ការប្រើ Gemini API Key អាចមានការចំណាយតាមគណនី Google។ Key រក្សាទុកក្នុង Browser របស់អ្នក (localStorage)។ សូមប្រើតែ Key ផ្ទាល់ខ្លួន និងកុំដាក់ឯកសារឯកជនទៅ API ដែលមិនទុកចិត្ត។</footer>
 </div>
 
 <script>
 const $=id=>document.getElementById(id);
-let file=null,cues=[],asr=null,playing=false;
-
-function status(t){$("status").innerText=t}
-
-function setKey(){
- let k=prompt("បញ្ចូល Gemini API Key:",localStorage.getItem("g_key")||"");
- if(k!==null){
- localStorage.setItem("g_key",k.trim());
- status("រក្សាទុក API Key រួច!");
- }
+let file=null,cues=[],whisper=null,playTimer=null,voices=[];
+function status(s,isErr=false){$("status").textContent=s;$("status").style.color=isErr?"#f87171":"#7dd3fc"}
+function setAPI(){let k=prompt("Paste Gemini API Key:",localStorage.getItem("gemini_key")||"");if(k!==null){localStorage.setItem("gemini_key",k.trim());status("API Key បានរក្សាទុកក្នុង Browser។")}}
+$("media").onchange=e=>{file=e.target.files[0];if(!file)return;let url=URL.createObjectURL(file);$("player").src=url;$("videoBox").style.display="block";status("បានជ្រើស៖ "+file.name+" ("+(file.size/1024/1024).toFixed(1)+" MB)");};
+$("srtfile").onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{$("raw").value=r.result;parseSRT();status("បានបើក SRT: "+f.name)};r.readAsText(f,"UTF-8");e.target.value=""};
+$("mute").onchange=applyVolume;$("volume").oninput=()=>{$("mute").checked=+$("volume").value===0;applyVolume()};
+function applyVolume(){let v=+$("volume").value/100;$("player").muted=$("mute").checked||v===0;$("player").volume=$("mute").checked?0:v}
+function secFmt(s){s=Math.max(0,s||0);let h=Math.floor(s/3600),m=Math.floor(s%3600/60),z=Math.floor(s%60),ms=Math.round((s-Math.floor(s))*1000);if(ms===1000){s++;return secFmt(s)}return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(z).padStart(2,"0")},${String(ms).padStart(3,"0")}`}
+function sec(t){let m=String(t||"").match(/(\d+):(\d+):(\d+)[,.](\d+)/);return m?+m[1]*3600+ +m[2]*60+ +m[3]+ +m[4]/1000:0}
+function timeFmt(t){t=String(t||"").trim().replace(".",",");let p=t.split(":");if(p.length===2)t="00:"+p[0].padStart(2,"0")+":"+p[1];if(!t.includes(","))t+=",000";return t}
+function parseSRT(){let text=$("raw").value.trim();cues=[];if(!text){render();return}for(let block of text.split(/\r?\n\s*\r?\n/)){let lines=block.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);if(!lines.length)continue;let ti=lines.findIndex(x=>x.includes("-->"));let start="00:00:00,000",end="00:00:03,000",body=lines;if(ti>=0){let p=lines[ti].split("-->");start=timeFmt(p[0]);end=timeFmt(p[1]);body=lines.slice(ti+1)}let txt=body.join(" ");let g=/^\[(ស្រី|F)\]/i.test(txt)?"F":"M";txt=txt.replace(/^\[(ស្រី|ប្រុស|F|M)\]\s*/i,"");if(txt)cues.push({s:start,e:end,g,t:txt})}render()}
+function toSRT(clean=false){return cues.map((c,i)=>`${i+1}\n${c.s} --> ${c.e}\n${clean?"":(c.g==="F"?"[ស្រី] ":"[ប្រុស] ")}${c.t}`).join("\n\n")}
+function syncRaw(){$("raw").value=toSRT(false);$("count").textContent=cues.length}
+function render(){ $("count").textContent=cues.length;if(!cues.length){$("cueList").innerHTML="<div style='color:#94a3b8;padding:12px'>មិនទាន់មានជួរ SRT</div>";syncRaw();return}
+$("cueList").innerHTML=cues.map((c,i)=>`<div class="cue"><div class="cuehead"><span class="badge">ជួរ ${i+1}</span><input class="time" value="${escapeHTML(c.s)}" onchange="editTime(${i},'s',this.value)"><span>→</span><input class="time" value="${escapeHTML(c.e)}" onchange="editTime(${i},'e',this.value)"><button class="${c.g==='F'?'purple':'blue'}" onclick="toggleGender(${i})">${c.g==='F'?'👩 ស្រី':'👨 ប្រុស'}</button><button onclick="seekCue(${i})">⏱️</button><button class="green" onclick="sayCue(${i})">🔊</button><button class="red" onclick="deleteCue(${i})">🗑️</button></div><textarea onchange="cues[${i}].t=this.value;syncRaw()">${escapeHTML(c.t)}</textarea></div>`).join("");syncRaw()}
+function escapeHTML(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function editTime(i,k,v){cues[i][k]=timeFmt(v);syncRaw()}
+function toggleGender(i){cues[i].g=cues[i].g==="F"?"M":"F";render()}
+function setAll(g){cues.forEach(c=>c.g=g);render()}
+function deleteCue(i){cues.splice(i,1);render()}
+function addCue(){let end=cues.length?sec(cues[cues.length-1].e):0;cues.push({s:secFmt(end),e:secFmt(end+3),g:"M",t:""});render()}
+function seekCue(i){if($("player").src){$("player").currentTime=sec(cues[i].s);$("player").play().catch(()=>{})}}
+function downloadSRT(clean){let blob=new Blob([toSRT(clean)],{type:"text/plain;charset=utf-8"});let a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="AngkorDub.srt";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+async function copySRT(){try{await navigator.clipboard.writeText(toSRT(false));status("បាន Copy SRT")}catch(e){$("raw").style.display="block";$("raw").value=toSRT(false);$("raw").select();status("សូម Copy ពីប្រអប់ SRT")}}
+function apiKey(){return localStorage.getItem("gemini_key")||""}
+async function gemini(parts){let key=apiKey();if(!key)throw Error("សូមបញ្ចូល Gemini API Key ជាមុន");let model=$("model").value;let url=`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`;let res=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{parts}]})});let data=await res.json();if(!res.ok)throw Error(data.error?.message||"Gemini API error");return data.candidates?.[0]?.content?.parts?.map(p=>p.text||"").join("")||""}
+function fileBase64(f){return new Promise((resolve,reject)=>{let r=new FileReader();r.onload=()=>resolve(r.result.split(",")[1]);r.onerror=reject;r.readAsDataURL(f)})}
+async function aiExtract(mode){if(!file)return alert("សូមជ្រើសវីដេអូ ឬសំឡេង");if(file.size>20*1024*1024)return alert("ឯកសារធំជាង 20MB។ សូមប្រើ Whisper (សម្រាប់ audio) ឬកាត់ឯកសារតូចជាងនេះ។");try{$("prog").style.display="block";$("prog").value=10;status("កំពុងផ្ញើឯកសារទៅ Gemini…");let prompt=mode==="original"?"Transcribe speech in the source language exactly. Return only JSON array with objects: {in:'00:00:00,000',out:'00:00:00,000',gender:'M' or 'F',text:'transcription'}.":"Transcribe the speech and translate it into natural, concise spoken Khmer suitable for dubbing. Identify speaker gender as M or F. Return ONLY JSON array with objects {in:'00:00:00,000',out:'00:00:00,000',gender:'M' or 'F',text:'Khmer translation'}.";let b64=await fileBase64(file);$("prog").value=35;let result=await gemini([{text:prompt},{inline_data:{mime_type:file.type||"application/octet-stream",data:b64}}]);$("prog").value=90;let match=result.match(/\[[\s\S]*\]/);if(!match)throw Error("AI មិនបានបញ្ជូន JSON Array ត្រឹមត្រូវ");let arr=JSON.parse(match[0]);cues=arr.map(x=>({s:timeFmt(x.in),e:timeFmt(x.out),g:String(x.gender||"M").toUpperCase()==="F"?"F":"M",t:String(x.text||"")}));render();$("prog").value=100;status("រួចរាល់! បាន "+cues.length+" ជួរ")}catch(e){status("កំហុស៖ "+e.message,true)}}
+async function translateCues(){if(!cues.length){parseSRT();if(!cues.length)return alert("សូមបើក SRT ឬបញ្ចូលអត្ថបទ");}try{let src=cues.map((c,i)=>`${i+1}. ${c.t}`).join("\n");status("កំពុងបកប្រែ SRT…");let answer=await gemini([{text:"Translate each numbered line to natural spoken Khmer. Keep the numbering and return only numbered lines, no commentary:\n"+src}]);let lines=answer.split(/\r?\n/).map(x=>x.replace(/^\s*\d+[\).:-]\s*/,"").trim()).filter(Boolean);cues.forEach((c,i)=>{if(lines[i])c.t=lines[i]});render();status("បកប្រែរួចរាល់")}catch(e){status("កំហុស៖ "+e.message,true)}
 }
-
-$("file").onchange=e=>{
- file=e.target.files[0];
- if(!file)return;
- if(file.type.startsWith("video")){
- $("video").src=URL.createObjectURL(file);
- $("videoBox").style.display="block";
- }
- status("បានជ្រើស: "+file.name);
-};
-
-$("srtfile").onchange=e=>{
- const f=e.target.files[0];
- if(!f)return;
- const r=new FileReader();
- r.onload=()=>{
- $("raw").value=r.result;
- parseRaw();
- status("បានបើក SRT!");
- };
- r.readAsText(f);
-};
-
-function sec(t){
- let m=String(t).match(/(\d+):(\d+):(\d+)[,.](\d+)/);
- if(!m)return 0;
- return +m[1]*3600 + +m[2]*60 + +m[3] + +m[4]/1000;
+async function localWhisper(){if(!file)return alert("សូមជ្រើស audio file");if(file.type.startsWith("video/"))return alert("Whisper មុខងារនេះទទួល audio file ដូចជា MP3/WAV/M4A។ វីដេអូ សូមប្រើ AI ស្រង់ខាងលើ ឬបំបែកជាសំឡេងជាមុន។");try{status("កំពុងដំឡើង Whisper (លើកទី១អាចយូរ)…");$("prog").style.display="block";$("prog").value=5;if(!whisper){const {pipeline,env}=await import("https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2");env.allowLocalModels=false;env.useBrowserCache=true;whisper=await pipeline("automatic-speech-recognition","Xenova/whisper-tiny",{progress_callback:p=>{if(p.progress)$("prog").value=Math.min(35,p.progress*.35)}})}status("កំពុង decode audio…");let buf=await file.arrayBuffer();let ctx=new AudioContext();let decoded=await ctx.decodeAudioData(buf);let target=16000;let offline=new OfflineAudioContext(1,Math.ceil(decoded.duration*target),target);let source=offline.createBufferSource();source.buffer=decoded;source.connect(offline.destination);source.start();let audio=(await offline.startRendering()).getChannelData(0);ctx.close();cues=[];let chunk=audio.length; // process audio in a single request
+status("Whisper កំពុងស្រង់សំឡេង…");let result=await whisper(audio,{language:"chinese",task:"transcribe",return_timestamps:true});if(result.chunks?.length){cues=result.chunks.map(ch=>{let start=ch.timestamp?.[0]||0,end=ch.timestamp?.[1]||start+3;return{s:secFmt(start),e:secFmt(Math.max(start+.3,end)),g:"M",t:ch.text.trim()}})}else if(result.text)cues=[{s:"00:00:00,000",e:secFmt(decoded.duration),g:"M",t:result.text}];render();$("prog").value=100;status("Whisper រួចរាល់")}catch(e){status("Whisper Error: "+e.message,true)}
 }
-
-function time(s){
- s=Math.max(0,s||0);
- let h=Math.floor(s/3600);
- let m=Math.floor(s%3600/60);
- let ss=Math.floor(s%60);
- let ms=Math.round((s-Math.floor(s))*1000);
- if(ms>=1000){ss++;ms=0}
- return String(h).padStart(2,"0")+":"+
- String(m).padStart(2,"0")+":"+
- String(ss).padStart(2,"0")+","+
- String(ms).padStart(3,"0");
-}
-
-function fmt(t){
- t=String(t||"").trim().replace(".",",");
- if(/^\d+:\d+,\d+$/.test(t))t="00:"+t;
- if(/^\d+:\d+:\d+$/.test(t))t+=",000";
- if(/^\d+:\d+:\d+,\d+$/.test(t))return t;
- return "00:00:00,000";
-}
-
-function parseRaw(){
- cues=[];
- let blocks=$("raw").value.trim().split(/\n\s*\n/);
- blocks.forEach(b=>{
- let lines=b.split(/\r?\n/).filter(x=>x.trim());
- if(!lines.length)return;
- let ti=lines.findIndex(x=>x.includes("-->"));
- if(ti<0)return;
- let p=lines[ti].split("-->");
- let s=fmt(p[0]),e=fmt(p[1]);
- let txt=lines.slice(ti+1).join(" ").trim();
- let g="M";
- if(txt.startsWith("[ស្រី]")){
- g="F";txt=txt.replace("[ស្រី]","").trim();
- }
- if(txt.startsWith("[ប្រុស]")){
- txt=txt.replace("[ប្រុស]","").trim();
- }
- cues.push({s,e,ss:sec(s),es:sec(e),g,t:txt});
- });
- render();
-}
-
-function raw(){
- $("raw").value=cues.map((c,i)=>
- (i+1)+"\n"+c.s+" --> "+c.e+"\n"+
- (c.g==="F"?"[ស្រី] ":"[ប្រុស] ")+c.t
- ).join("\n\n");
-}
-
-function render(){
- $("list").innerHTML=cues.map((c,i)=>`
- <div class="cue">
- <div class="row">
- <input class="time" value="${c.s}" onchange="setTime(${i},'s',this.value)">
- <input class="time" value="${c.e}" onchange="setTime(${i},'e',this.value)">
- <button onclick="gender(${i})">${c.g==="F"?"👩 ស្រី":"👨 ប្រុស"}</button>
- <button onclick="say(${i})">🔊</button>
- <button onclick="seek(${i})">⏱️</button>
- <button class="red" onclick="del(${i})">🗑️</button>
- </div>
- <textarea oninput="cues[${i}].t=this.value;raw()">${escapeHTML(c.t)}</textarea>
- </div>
- `).join("");
- raw();
-}
-
-function escapeHTML(s){
- return String(s||"").replace(/&/g,"&amp;")
- .replace(/</g,"&lt;").replace(/>/g,"&gt;")
- .replace(/"/g,"&quot;");
-}
-
-function setTime(i,k,v){
- cues[i][k]=fmt(v);
- cues[i].ss=sec(cues[i].s);
- cues[i].es=sec(cues[i].e);
- raw();
-}
-
-function gender(i){
- cues[i].g=cues[i].g==="F"?"M":"F";
- render();
-}
-function allGender(g){
- cues.forEach(c=>c.g=g);
- render();
-}
-function del(i){
- cues.splice(i,1);
- render();
-}
-function add(){
- let s=cues.length?cues[cues.length-1].es:0;
- cues.push({s:time(s),e:time(s+3),ss:s,es:s+3,g:"M",t:""});
- render();
-}
-function seek(i){
- if($("video").src){
- $("video").currentTime=cues[i].ss;
- }
-}
-
-function stop(){
- playing=false;
- speechSynthesis.cancel();
- $("video").pause();
-}
-
-function say(i){
- stop();
- speech(cues[i].t,cues[i].g);
-}
-
-function speech(t,g){
- let u=new SpeechSynthesisUtterance(t);
- u.lang="km-KH";
- u.rate=1.05;
- u.pitch=g==="F"?+$("female").value:+$("male").value;
- speechSynthesis.speak(u);
-}
-
-async function readAll(){
- stop();
- for(let c of cues){
- await new Promise(res=>{
- let u=new SpeechSynthesisUtterance(c.t);
- u.lang="km-KH";
- u.pitch=c.g==="F"?+$("female").value:+$("male").value;
- u.onend=res;
- u.onerror=res;
- speechSynthesis.speak(u);
- });
- }
-}
-
-async function playDub(){
- if(!cues.length)return alert("មិនទាន់មាន Subtitle!");
- stop();
- playing=true;
- let v=$("video");
- if(v.src){
- v.muted=$("mute").checked;
- v.playbackRate=+$("speed").value;
- v.play();
- }
- for(let i=0;i<cues.length;i++){
- if(!playing)break;
- let c=cues[i];
- if(v.src && v.currentTime<c.ss)v.currentTime=c.ss;
- await new Promise(res=>{
- let u=new SpeechSynthesisUtterance(c.t);
- u.lang="km-KH";
- u.pitch=c.g==="F"?+$("female").value:+$("male").value;
- u.rate=1.05;
- u.onend=res;
- u.onerror=res;
- speechSynthesis.speak(u);
- });
- }
- playing=false;
-}
-
-function saveSrt(clean){
- let text=cues.map((c,i)=>
- (i+1)+"\n"+c.s+" --> "+c.e+"\n"+
- (clean?"":(c.g==="F"?"[ស្រី] ":"[ប្រុស] "))+c.t
- ).join("\n\n");
- let blob=new Blob([text],{type:"text/plain;charset=utf-8"});
- let a=document.createElement("a");
- a.href=URL.createObjectURL(blob);
- a.download="AngkorDub.srt";
- a.click();
-}
-
-async function api(parts){
- const key=localStorage.getItem("g_key");
- if(!key)throw Error("សូមបញ្ចូល API Key ជាមុន!");
- let model=$("model").value;
- let r=await fetch(
- "https://generativelanguage.googleapis.com/v1beta/models/"+model+":generateContent?key="+encodeURIComponent(key),
- {
- method:"POST",
- headers:{"Content-Type":"application/json"},
- body:JSON.stringify({contents:[{parts}]})
- });
- let j=await r.json();
- if(j.error)throw Error(j.error.message);
- return j.candidates?.[0]?.content?.parts?.[0]?.text||"";
-}
-
-function jsonArray(txt){
- let m=txt.match(/\[[\s\S]*\]/);
- if(!m)throw Error("AI មិនបានបញ្ជូន JSON!");
- return JSON.parse(m[0]);
-}
-
-async function aiExtract(km){
- if(!file)return alert("សូមជ្រើសវីដេអូជាមុន!");
- if(file.size>18*1024*1024)
- return alert("File ធំពេក! សូមប្រើ Whisper ឬ SRT!");
- try{
- status("AI កំពុងដំណើរការ...");
- let prompt=km?
- `ស្រង់សំឡេងក្នុងវីដេអូ ហើយបកប្រែទៅខ្មែរនិយាយធម្មជាតិ សម្រាប់ Dub។
- កំណត់ពេលវេលា និងភេទអ្នកនិយាយ។
- បញ្ជូន JSON Array តែប៉ុណ្ណោះ៖
- [{"in":"00:00:01,000","out":"00:00:04,000","gender":"M","text":"អត្ថបទ"}]`
- :
- `ស្រង់សំឡេងភាសាដើមពីវីដេអូ។ កុំបកប្រែ។
- បញ្ជូន JSON Array តែប៉ុណ្ណោះ៖
- [{"in":"00:00:01,000","out":"00:00:04,000","gender":"M","text":"អត្ថបទ"}]`;
- let b=await new Promise(res=>{
- let r=new FileReader();
- r.onload=()=>res(r.result.split(",")[1]);
- r.readAsDataURL(file);
- });
- let txt=await api([
- {text:prompt},
- {inline_data:{mime_type:file.type||"audio/mp3",data:b}}
- ]);
- cues=jsonArray(txt).map(x=>{
- let s=fmt(x.in),e=fmt(x.out);
- return{s,e,ss:sec(s),es:sec(e),g:String(x.gender).toUpperCase()==="F"?"F":"M",t:x.text||""};
- });
- render();
- status("AI រួចរាល់! "+cues.length+" ជួរ");
- }catch(e){status("ERROR: "+e.message)}
-}
-
-async function translateSRT(){
- if(!cues.length)parseRaw();
- if(!cues.length)return alert("សូមបញ្ចូល SRT ឬដកស្រង់ចិន!");
- try{
- status("កំពុងបកប្រែ...");
- let original=cues.map((c,i)=>i+". "+c.t).join("\n");
- let txt=await api([{text:
- `បកប្រែអត្ថបទខាងក្រោមទៅជាភាសាខ្មែរនិយាយធម្មជាតិ
- សម្រាប់សំឡេង Dub។ រក្សាលេខជួរដដែល។
- បញ្ជូនតែ JSON Array ["អត្ថបទ1","អត្ថបទ2"]:\n${original}`
- }]);
- let m=txt.match(/\[[\s\S]*\]/);
- if(!m)throw Error("ទិន្នន័យមិនត្រឹមត្រូវ");
- let arr=JSON.parse(m[0]);
- arr.forEach((t,i)=>{if(cues[i])cues[i].t=t});
- render();
- status("បកប្រែរួចរាល់!");
- }catch(e){status("ERROR: "+e.message)}
-}
-
-async function extract(){
- if(!file)return alert("សូមជ្រើសវីដេអូជាមុន!");
- try{
- status("កំពុងទាញយក Whisper...");
- if(!asr){
- const {pipeline,env}=await import(
- "https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2");
- env.allowLocalModels=false;
- env.useBrowserCache=true;
- asr=await pipeline("automatic-speech-recognition",
- "Xenova/whisper-tiny");
- }
- status("កំពុងបំបែកសំឡេង...");
- const ab=await file.arrayBuffer();
- const ac=new AudioContext();
- const dec=await ac.decodeAudioData(ab);
- const pcm=dec.getChannelData(0);
- const step=20*16000;
- cues=[];
- for(let i=0;i<pcm.length;i+=step){
- let part=pcm.slice(i,Math.min(i+step,pcm.length));
- let s=i/dec.sampleRate;
- status("Whisper: "+Math.round(i/pcm.length*100)+"%");
- let res=await asr(part,{language:"chinese",task:"transcribe"});
- if(res.text?.trim()){
- let t=res.text.trim();
- cues.push({s:time(s),e:time(s+20),ss:s,es:s+20,g:"M",t});
- }
- }
- render();
- status("ដកស្រង់រួចរាល់!");
- ac.close();
- }catch(e){status("ERROR: "+e.message)}
-}
+function getVoices(){voices=speechSynthesis.getVoices();let kh=voices.filter(v=>/km|khmer/i.test(v.lang+" "+v.name));let all=kh.length?kh:voices;["maleVoice","femaleVoice"].forEach(id=>{$(id).innerHTML="";all.forEach((v,i)=>{$(id).add(new Option(v.name+" ("+v.lang+")",voices.indexOf(v)))})});if(all.length){let first=voices.indexOf(all[0]);$("maleVoice").value=first;$("femaleVoice").value=first}}
+speechSynthesis.onvoiceschanged=getVoices;getVoices();
+function speech(text,g){return new Promise(resolve=>{let u=new SpeechSynthesisUtterance(text);let idx=+(g==="F"?$("femaleVoice").value:$("maleVoice").value);if(voices[idx])u.voice=voices[idx];u.lang=u.voice?.lang||"km-KH";u.pitch=+(g==="F"?$("fpitch").value:$("mpitch").value);u.rate=1;u.onend=resolve;u.onerror=resolve;speechSynthesis.speak(u)})}
+async function sayCue(i){stopSpeech();await speech(cues[i].t,cues[i].g)}
+function stopSpeech(){speechSynthesis.cancel();if(playTimer){clearTimeout(playTimer);playTimer=null}}
+async function readAll(){stopSpeech();for(let c of cues){await speech(c.t,c.g)}}
+async function playDub(){if(!$("player").src)return alert("សូមជ្រើសវីដេអូ");stopSpeech();applyVolume();$("player").playbackRate=+$("rate").value;await $("player").play().catch(()=>{});let index=0;let start=$("player").currentTime;async function next(){if(index>=cues.length)return;let c=cues[index];let target=sec(c.s);if(target<start){index++;next();return}let wait=Math.max(0,(target-$("player").currentTime)*1000);playTimer=setTimeout(async()=>{if($("player").paused)return;await speech(c.t,c.g);index++;next()},wait)}next()}
 </script>
 </body>
-</html>
+</html>ices[idx])u.voice=voices[idx];u.lang=u.voice?.lang||"km-KH";u.pitch=+(g==="F"?$("fpitch").value:$("mpitch").value);u.rate=1;u.onend=resolve;u.onerror=resolve;speechSynthesis.speak(u)})}
+async function sayCue(i){stopSpeech();await speech(cues[i].t,cues[i].g)}
+function stopSpeech(){speechSynthesis.cancel();if(playTimer){clearTimeout(playTimer);playTimer=null}}
+async function readAll(){stopSpeech();for(let c of cues){await speech(c.t,c.g)}}
+async function playDub(){if(!$("player").src)return alert("សូមជ្រើសវីដេអូ");stopSpeech();applyVolume();$("player").playbackRate=+$("rate").value;await $("player").play().catch(()=>{});let index=0;let start=$("player").currentTime;async function next(){if(index>=cues.length)return;let c=cues[index];let target=sec(c.s);if(target<start){index++;next();return}let wait=Math.max(0,(target-$("player").currentTime)*1000);playTimer=setTimeout(async()=>{if($("player").paused)return;await speech(c.t,c.g);index++;next()},wait)}next()}
+</script>
+</body>
+</htm
