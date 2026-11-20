@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1120">
+  <title>Angkor Dub Studio — បកប្រែ & បញ្ចូលសំឡេងខ្មែរ</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f172a'/%3E%3Cpath d='M32 10l-4 10h8l-4-10zm-11 8l-3 9h6l-3-9zm22 0l-3 9h6l-3-9zm-19 10h16v6H24v-6zm-10 4l-2 6h4l-2-6zm36 0l-2 6h4l-2-6zM10 38h44v6H10v-6zm-4 8h52v6H6v-6z' fill='%23f59e0b'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card: #111c33;
+      --card2: #182542;
+      --border: #263659;
+      --gold: #f59e0b;
+      --gold-light: #fcd34d;
+      --blue: #38bdf8;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, 'Noto Sans Khmer', sans-serif; }
+    body { margin: 0; padding: 12px; background: radial-gradient(circle at top, #172544 0%, var(--bg) 55%); color: var(--text); min-height: 100vh; }
+    .container { max-width: 920px; margin: 0 auto; }
+
+    /* Header with Angkor Wat Logo */
+    .header {
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+      background: linear-gradient(135deg, #16233e 0%, #1d2c4d 100%);
+      border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 16px; padding: 12px 16px; margin-bottom: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .logo-box {
+      width: 50px; height: 50px; border-radius: 14px;
+      background: linear-gradient(145deg, #1e293b, #0f172a);
+      border: 1.5px solid var(--gold); display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 16px rgba(245, 158, 11, 0.25); flex-shrink: 0;
+    }
+    .brand h1 { margin: 0; font-size: 18px; background: linear-gradient(90deg, #fde68a, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .brand small { color: var(--muted); font-size: 12px; display: block; margin-top: 2px; }
+
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 14px; margin-bottom: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    }
+    .card-title { font-size: 14px; font-weight: 700; color: var(--gold-light); margin: 0 0 10px 0; display: flex; align-items: center; gap: 6px; }
+    .row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; align-items: center; }
+    .row:last-child { margin-bottom: 0; }
+
+    button, select, input[type="text"], input[type="file"] {
+      background: var(--card2); color: #fff; border: 1px solid #334a77;
+      padding: 9px 12px; border-radius: 10px; font-size: 13px; cursor: pointer; transition: 0.15s;
+    }
+    button:active { transform: scale(0.96); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-gold { background: linear-gradient(135deg, #d97706, #f59e0b); border-color: #fbbf24; color: #0f172a; font-weight: 700; }
+    .btn-blue { background: #2563eb; border-color: #3b82f6; font-weight: 600; }
+    .btn-cyan { background: #0891b2; border-color: #06b6d4; font-weight: 600; }
+    .btn-purple { background: #7c3aed; border-color: #8b5cf6; font-weight: 600; }
+    .btn-green { background: #16a34a; border-color: #22c55e; font-weight: 600; }
+    .btn-red { background: #dc2626; border-color: #ef4444; font-weight: 600; }
+    .btn-dark { background: #1e293b; border-color: #475569; }
+    .btn-sm { padding: 5px 9px; font-size: 12px; border-radius: 7px; }
+
+    /* Progress Bar 1-100% */
+    .prog-wrap {
+      display: none; background: #0f172a; border: 1px solid rgba(245, 158, 11, 0.45);
+      border-radius: 12px; padding: 10px 12px; margin-top: 8px;
+    }
+    .prog-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 8px; }
+    .prog-text { font-size: 13px; color: #fde68a; word-break: break-word; }
+    .prog-pct { font-size: 18px; font-weight: 800; color: #fbbf24; min-width: 54px; text-align: right; }
+    .prog-track { width: 100%; height: 12px; background: #1e293b; border-radius: 99px; overflow: hidden; }
+    .prog-bar {
+      height: 100%; width: 0%; border-radius: 99px; transition: width 0.25s ease;
+      background: linear-gradient(90deg, #f59e0b, #38bdf8, #22c55e);
+    }
+
+    /* Video + Live Subtitle Overlay */
+    .video-box { position: relative; width: 100%; border-radius: 12px; overflow: hidden; background: #000; display: none; margin-bottom: 10px; border: 1px solid #334155; }
+    video { width: 100%; max-height: 280px; display: block; background: #000; }
+    .sub-overlay {
+      position: absolute; left: 8px; right: 8px; bottom: 44px; text-align: center; pointer-events: none;
+      font-size: 15px; font-weight: 700; color: #fff; text-shadow: 0 2px 6px #000, 0 0 3px #000;
+      background: rgba(0, 0, 0, 0.58); padding: 5px 10px; border-radius: 8px; display: none;
+    }
+
+    /* Audio Mixer Bar */
+    .mixer {
+      background: #0f172a; border: 1px solid #263659; border-radius: 10px; padding: 10px;
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 10px;
+    }
+    .switch-lbl { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer; background: #1e293b; padding: 6px 10px; border-radius: 8px; border: 1px solid #334155; }
+    .switch-lbl input { width: 16px; height: 16px; accent-color: #ef4444; }
+    .slider-lbl { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+    .slider-lbl input[type="range"] { width: 85px; accent-color: var(--gold); }
+
+    /* Tabs */
+    .tabs { display: flex; gap: 8px; margin-bottom: 10px; }
+    .tab-btn { flex: 1; padding: 9px; border-radius: 10px; background: #0f172a; border: 1px solid var(--border); color: var(--muted); font-weight: 700; }
+    .tab-btn.active { background: linear-gradient(135deg, #1d4ed8, #2563eb); color: #fff; border-color: #60a5fa; }
+
+    /* Dubbing Editor List */
+    .cue-list { max-height: 390px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 2px; }
+    .cue-item {
+      background: #0f172a; border: 1px solid #263659; border-radius: 10px; padding: 10px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .cue-item.active-cue { border-color: var(--gold); box-shadow: 0 0 12px rgba(245, 158, 11, 0.25); }
+    .cue-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; justify-content: space-between; }
+    .cue-times { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+    .cue-times input { width: 102px; padding: 4px 6px; font-size: 12px; font-family: monospace; background: #182542; }
+    .cue-text { width: 100%; padding: 8px; font-size: 14px; background: #16223a; border: 1px solid #334a77; color: #fff; border-radius: 8px; resize: vertical; min-height: 44px; }
+    .gender-m { background: #1d4ed8; border-color: #60a5fa; }
+    .gender-f { background: #be185d; border-color: #f472b6; }
+
+    textarea#out {
+      width: 100%; height: 320px; background: #0f172a; color: #e2e8f0;
+      border: 1px solid #334a77; border-radius: 10px; padding: 10px; font-size: 13px; line-height: 1.55; font-family: monospace;
+    }
+    #msg { font-size: 13px; color: #38bdf8; margin-top: 6px; word-break: break-word; }
+    .badge { background: rgba(245,158,11,0.18); color: var(--gold-light); padding: 2px 7px; border-radius: 99px; font-size: 11px; font-weight: 700; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header + Angkor Wat Logo -->
+  <div class="header">
+    <div class="brand">
+      <div class="logo-box" title="ប្រាសាទអង្គរវត្ត">
+        <svg viewBox="0 0 64 64" width="38" height="38" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="ag" x1="0" y1="0" x2="0" y2="64" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#fde68a"/>
+              <stop offset="55%" stop-color="#f59e0b"/>
+              <stop offset="100%" stop-color="#b45309"/>
+            </linearGradient>
+          </defs>
+          <!-- 5 Iconic Angkor Wat Towers -->
+          <path d="M32 6 C30.5 11 28.5 14 28 21 L36 21 C35.5 14 33.5 11 32 6 Z" fill="url(#ag)"/>
+          <path d="M21 14 C19.8 18 18.5 21 18 27 L24 27 C23.5 21 22.2 18 21 14 Z" fill="url(#ag)"/>
+          <path d="M43 14 C41.8 18 40.5 21 40 27 L46 27 C45.5 21 44.2 18 43 14 Z" fill="url(#ag)"/>
+          <path d="M12 22 C11 25 10.2 28 10 33 L14.5 33 C14.3 28 13 25 12 22 Z" fill="url(#ag)"/>
+          <path d="M52 22 C51 25 50.2 28 50 33 L54.5 33 C54.3 28 53 25 52 22 Z" fill="url(#ag)"/>
+          <!-- Temple Gallery & Base -->
+          <rect x="25" y="21" width="14" height="6" rx="1" fill="url(#ag)"/>
+          <rect x="16" y="27" width="32" height="6" rx="1" fill="url(#ag)"/>
+          <rect x="8" y="33" width="48" height="7" rx="1" fill="url(#ag)"/>
+          <!-- Pillars cutouts -->
+          <rect x="14" y="35" width="3" height="5" fill="#0f172a"/>
+          <rect x="21" y="35" width="3" height="5" fill="#0f172a"/>
+          <rect x="30" y="34" width="4" height="6" fill="#0f172a"/>
+          <rect x="40" y="35" width="3" height="5" fill="#0f172a"/>
+          <rect x="47" y="35" width="3" height="5" fill="#0f172a"/>
+          <!-- Lower Terrace & Reflection -->
+          <rect x="5" y="41" width="54" height="4.5" rx="1.5" fill="url(#ag)"/>
+          <rect x="2" y="47" width="60" height="4" rx="1.5" fill="url(#ag)"/>
+          <path d="M12 55 H52 M18 59 H46" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+        </svg>
+      </div>
+      <div>
+        <h1>Angkor Dub Studio</h1>
+        <small>ដកស្រង់ចិន • បកប្រែខ្មែរ • បញ្ចូលសំឡេងប្រុស/ស្រីអូតូ</small>
+      </div>
+    </div>
+    <div class="row" style="margin:0;">
+      <button class="btn-gold" onclick="setKey()">🔑 API Key</button>
+      <select id="model" onchange="onModelChange()">
+        <option value="auto">🤖 Auto (គ្រប់ជំនាន់អូតូ)</option>
+        <option value="gemini-3.8-flash">Gemini 3.8 Flash (ថ្មី)</option>
+        <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+        <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+        <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash-Lite</option>
+        <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+        <option value="gemini-2.0-flash-lite">Gemini 2.0 Flash-Lite</option>
+        <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+        <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+        <option value="custom">⚙️ វាយឈ្មោះ Model ខ្លួនឯង</option>
+      </select>
+      <input type="text" id="customModel" placeholder="ឧ. gemini-3.8-pro" style="display:none; width:155px;">
+    </div>
+  </div>
+
+  <!-- Card 1: Video + Extraction + Translation -->
+  <div class="card">
+    <div class="card-title">🎬 ១. រើសវីដេអូ ដកស្រង់ភាសាចិន និងបកប្រែខ្មែរ</div>
+    <div class="row">
+      <input type="file" id="fileInput" accept="video/*,audio/*">
+      <button class="btn-dark" onclick="document.getElementById('srtInput').click()">📂 បើកឯកសារ .SRT</button>
+      <input type="file" id="srtInput" accept=".srt,.txt" style="display:none">
+    </div>
+
+    <div class="row">
+      <button class="btn-gold" id="btnLocalZh" onclick="extractChineseLocal()">💻 ដកស្រង់ចិនដោយម៉ាស៊ីន (1–100%)</button>
+      <button class="btn-cyan" onclick="translateSrt()">🔄 បកប្រែ SRT → ខ្មែរ (ប្រុស/ស្រីអូតូ)</button>
+      <button class="btn-purple" onclick="runAI('km')">✨ AI ស្រង់ & បកប្រែផ្ទាល់</button>
+      <button class="btn-dark" onclick="runAI('orig')">📝 AI ស្រង់ចិនដើម</button>
+    </div>
+
+    <!-- Live Progress Bar 1% -> 100% -->
+    <div class="prog-wrap" id="progWrap">
+      <div class="prog-top">
+        <span class="prog-text" id="progText">កំពុងដំណើរការ...</span>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <span class="prog-pct" id="progPct">0%</span>
+          <button class="btn-red btn-sm" id="btnCancel" onclick="cancelTask()" style="display:none;">⏹️ ឈប់</button>
+        </div>
+      </div>
+      <div class="prog-track"><div class="prog-bar" id="progBar"></div></div>
+    </div>
+    <div id="msg">រួចរាល់! រើសវីដេអូ រួចចុច 💻 ដកស្រង់ចិនដោយម៉ាស៊ីន ឬបើកឯកសារ .SRT។</div>
+  </div>
+
+  <!-- Card 2: Video Preview & Dubbing Audio Mixer -->
+  <div class="card">
+    <div class="card-title">🎚️ ២. វីដេអូ និងការបញ្ចូលសំឡេង AI (បិទសំឡេងដើម)</div>
+    <div class="video-box" id="videoBox">
+      <video id="player" controls playsinline></video>
+      <div class="sub-overlay" id="subOverlay"></div>
+    </div>
+
+    <div class="mixer">
+      <label class="switch-lbl">
+        <input type="checkbox" id="muteOrig" checked onchange="applyAudioMix()">
+        <span>🔇 បិទសំឡេងដើមចោល (ដាក់តែសំឡេង AI)</span>
+      </label>
+      <label class="slider-lbl">
+        <span>សំឡេងដើម៖ <b id="volTxt">0%</b></span>
+        <input type="range" id="origVol" min="0" max="100" value="0" oninput="onVolSlide()">
+      </label>
+      <label class="slider-lbl">
+        <span>ល្បឿននិយាយ៖</span>
+        <select id="rate" style="padding:5px 8px;">
+          <option value="1.0">1.0x</option>
+          <option value="1.15" selected>1.15x (ណែនាំ)</option>
+          <option value="1.25">1.25x</option>
+          <option value="1.4">1.4x</option>
+        </select>
+      </label>
+      <label class="slider-lbl">
+        <span>👨 ប្រុស៖</span>
+        <input type="range" id="malePitch" min="0.5" max="1.0" step="0.05" value="0.75">
+      </label>
+      <label class="slider-lbl">
+        <span>👩 ស្រី៖</span>
+        <input type="range" id="femalePitch" min="1.05" max="1.6" step="0.05" value="1.25">
+      </label>
+    </div>
+
+    <div class="row">
+      <button class="btn-green" onclick="startDubPlay()">▶️ ចាក់វីដេអូ + សំឡេងខ្មែរប្រុស/ស្រីអូតូ</button>
+      <button class="btn-blue" onclick="speakAllSequential()">🔊 អានសំឡេងខ្មែរទាំងអស់</button>
+      <button class="btn-red" onclick="stopDubPlay()">⏹️ ឈប់សំឡេង</button>
+    </div>
+  </div>
+
+  <!-- Card 3: Visual Dubbing Editor & SRT Export -->
+  <div class="card">
+    <div class="row" style="justify-content:space-between;">
+      <div class="card-title" style="margin:0;">🎛️ ៣. កាត់តសំឡេងតាមជួរ (ប្រុស/ស្រី) & ទាញយក SRT <span class="badge" id="cueCount">0 ជួរ</span></div>
+      <div class="row" style="margin:0;">
+        <button class="btn-green btn-sm" onclick="saveSrt(true)">💾 Save .SRT (ស្អាត)</button>
+        <button class="btn-dark btn-sm" onclick="saveSrt(false)">💾 Save (មានប្រុស/ស្រី)</button>
+        <button class="btn-dark btn-sm" onclick="copyOut()">📄 Copy</button>
+      </div>
+    </div>
+
+    <div class="tabs" style="margin-top:10px;">
+      <button class="tab-btn active" id="tabEditor" onclick="switchTab('editor')">🎭 កាត់តសំឡេង (ប្រុស/ស្រី)</button>
+      <button class="tab-btn" id="tabRaw" onclick="switchTab('raw')">📄 អត្ថបទ SRT សរុប</button>
+    </div>
+
+    <div id="paneEditor">
+      <div class="cue-list" id="cueList">
+        <div style="text-align:center; color:var(--muted); padding:28px 10px; font-size:13px;">
+          មិនទាន់មានអក្សររត់ទេ — រើសវីដេអូ រួចចុចដកស្រង់ ឬបើកឯកសារ .SRT ឬ Paste ក្នុងផ្ទាំង «អត្ថបទ SRT សរុប»។
+        </div>
+      </div>
+      <div class="row" style="margin-top:10px;">
+        <button class="btn-dark btn-sm" onclick="addCue()">➕ បន្ថែមជួរថ្មី</button>
+        <button class="btn-dark btn-sm" onclick="setAllGender('M')">👨 ដាក់ប្រុសទាំងអស់</button>
+        <button class="btn-dark btn-sm" onclick="setAllGender('F')">👩 ដាក់ស្រីទាំងអស់</button>
+      </div>
+    </div>
+
+    <div id="paneRaw" style="display:none;">
+      <textarea id="out" oninput="syncFromRaw()" placeholder="1&#10;00:00:01,000 --> 00:00:04,000&#10;[ប្រុស] សួស្តី! នេះជាអក្សររត់ភាសាខ្មែរ..."></textarea>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let fileObj = null;
+  let cues = [];
+  let dubMode = false;
+  let lastSpokenIdx = -1;
+  let cancelFlag = false;
+  let localTranscriber = null;
+  let seqSpeaking = false;
+
+  const msg = document.getElementById("msg");
+  const out = document.getElementById("out");
+  const player = document.getElementById("player");
+  const videoBox = document.getElementById("videoBox");
+  const subOverlay = document.getElementById("subOverlay");
+  const cueList = document.getElementById("cueList");
+  const cueCount = document.getElementById("cueCount");
+
+  const AUTO_MODELS = [
+    "gemini-3.8-flash",
+    "gemini-2.0-flash",
+    "gemini-2.0-flash-lite",
+    "gemini-2.5-flash",
+    "gemini-2.5-flash-lite",
+    "gemini-1.5-flash"
+  ];
+
+  // Progress bar controller (1% -> 100%)
+  function setProgress(pct, text, cancellable = false) {
+    const wrap = document.getElementById("progWrap");
+    const clamped = Math.max(0, Math.min(100, Math.round(pct)));
+    wrap.style.display = "block";
+    document.getElementById("progBar").style.width = clamped + "%";
+    document.getElementById("progPct").innerText = clamped + "%";
+    document.getElementById("progText").innerText = text;
+    document.getElementById("btnCancel").style.display = cancellable ? "inline-block" : "none";
+  }
+
+  function hideProgress() {
+    document.getElementById("progWrap").style.display = "none";
+  }
+
+  function cancelTask() {
+    cancelFlag = true;
+    msg.innerText = "⏹️ កំពុងបញ្ឈប់ការដំណើរការ...";
+  }
+
+  function onModelChange() {
+    const m = document.getElementById("model").value;
+    document.getElementById("customModel").style.display = m === "custom" ? "inline-block" : "none";
+  }
+
+  function setKey() {
+    const k = prompt("បញ្ចូល Gemini API Key របស់អ្នក (AIza...):", localStorage.getItem("g_key") || "");
+    if (k !== null) {
+      localStorage.setItem("g_key", k.trim());
+      msg.innerText = "✅ បានរក្សាទុក API Key រួចរាល់!";
+    }
+  }
+
+  // Video / Audio upload
+  document.getElementById("fileInput").onchange = (e) => {
+    fileObj = e.target.files[0];
+    if (!fileObj) return;
+    player.src = URL.createObjectURL(fileObj);
+    videoBox.style.display = "block";
+    applyAudioMix();
+    msg.innerText = `📁 បានរើស៖ ${fileObj.name} (${(fileObj.size / 1024 / 1024).toFixed(2)} MB)`;
+  };
+
+  // Load .SRT file
+  document.getElementById("srtInput").onchange = (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      out.value = r.result;
+      syncFromRaw();
+      msg.innerText = `📂 បានបើក៖ ${f.name} (${cues.length} ជួរ) — ចុច 🔄 បកប្រែ SRT → ខ្មែរ បានភ្លាម!`;
+    };
+    r.readAsText(f, "UTF-8");
+    e.target.value = "";
+  };
+
+  // Audio Mute / Mix controls
+  function applyAudioMix() {
+    const mute = document.getElementById("muteOrig").checked;
+    const slider = document.getElementById("origVol");
+    if (mute) {
+      player.muted = true;
+      player.volume = 0;
+      slider.value = 0;
+      document.getElementById("volTxt").innerText = "0%";
+    } else {
+      const v = Math.max(10, parseInt(slider.value || "50", 10));
+      slider.value = v;
+      player.muted = false;
+      player.volume = v / 100;
+      document.getElementById("volTxt").innerText = v + "%";
+    }
+  }
+
+  function onVolSlide() {
+    const v = parseInt(document.getElementById("origVol").value, 10);
+    document.getElementById("volTxt").innerText = v + "%";
+    document.getElementById("muteOrig").checked = (v === 0);
+    player.muted = (v === 0);
+    player.volume = v / 100;
+  }
+
+  // Time formatting helpers
+  function secToSrt(sec) {
+    sec = Math.max(0, Number(sec) || 0);
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = Math.floor(sec % 60);
+    const ms = Math.round((sec - Math.floor(sec)) * 1000);
+    return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")},${String(ms).padStart(3,"0")}`;
+  }
+
+  function srtToSec(str) {
+    const m = String(str || "").trim().match(/(\d+):(\d+):(\d+)[,\.](\d+
